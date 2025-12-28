@@ -1,0 +1,121 @@
+# Synaptix Project
+
+## Architecture
+
+```mermaid
+graph TB
+    subgraph Input["🎤 Multi-Modal Data Acquisition"]
+        A1[Audio Stream<br/>Speech & Voice<br/>High-freq sampling]
+        A2[Video Stream<br/>Pose & Movement<br/>30-60 Hz]
+        A3[Text Input<br/>Symptoms & Context<br/>Discrete events]
+    end
+
+    subgraph Preprocessing["⚙️ Temporal Alignment Layer"]
+        B1[Audio Processing<br/>Extract pitch, frequency<br/>Detect micro-pauses]
+        B2[Video Processing<br/>Extract pose keypoints<br/>Movement vectors]
+        B3[Text Processing<br/>Semantic parsing<br/>Symptom extraction]
+        B4[Cross-Modal Synchronizer<br/>Temporal Attention<br/>Normalize sampling rates]
+    end
+
+    subgraph BDH["🧠 BDH Architecture - Spiking Neural Network"]
+        C1[Event Encoder<br/>Convert to spike trains<br/>Temporal coding]
+        
+        subgraph DualMemory["Dual-Memory System"]
+            C2A[Frozen Graph<br/>Expert Clinical Baseline<br/>Pretrained weights]
+            C2B[Plastic Graph<br/>Personalized Adaptation<br/>Hebbian learning σ]
+        end
+        
+        C3[Leaky Integrate-and-Fire<br/>Neurons<br/>Membrane potential<br/>Threshold detection]
+        
+        C4[Synaptic Plasticity<br/>Weight updates<br/>Hebbian rule:<br/>Fire together → Wire together]
+        
+        C5[Sparse Activation<br/>~5% active neurons<br/>Energy efficient<br/>Interpretable]
+    end
+
+    subgraph Analysis["📊 Analysis & Detection Layer"]
+        D1[Acoustic Physics<br/>Micro-prosodic jitter<br/>Speech rhythm variance<br/>Phonetic stability]
+        D2[Motor Patterns<br/>Movement coherence<br/>Tremor detection<br/>ISI anomalies]
+        D3[Semantic Logic<br/>Word patterns<br/>Coherence tracking<br/>Language drift]
+        D4[Temporal Comparator<br/>Current vs Baseline<br/>Longitudinal tracking<br/>Drift detection]
+    end
+
+    subgraph Memory["💾 Persistent Memory Storage"]
+        E1[Synaptic Graph<br/>Edge weights = memory<br/>Infinite retention<br/>O(T) complexity]
+        E2[Baseline Timeline<br/>Historical snapshots<br/>6-month comparisons<br/>Evolution tracking]
+    end
+
+    subgraph Clinical["🏥 Clinical Output & Interpretability"]
+        F1[Semantic Mapping Layer<br/>Neuron clusters →<br/>Medical concepts]
+        F2[Interpretability Dashboard<br/>Glass Brain visualization<br/>Active circuit paths<br/>Cluster 82: Dysarthria]
+        F3[Clinical Alerts<br/>Decline indicators<br/>Biomarker changes<br/>Risk scores]
+        F4[Audit Trail<br/>Explainable reasoning<br/>Synaptic path tracing<br/>Medical accountability]
+    end
+
+    subgraph Edge["📱 Edge Deployment"]
+        G1[Local Processing<br/>Wearable/Phone<br/>100% Privacy<br/>Real-time monitoring]
+    end
+
+    %% Connections - Input to Preprocessing
+    A1 --> B1
+    A2 --> B2
+    A3 --> B3
+    B1 --> B4
+    B2 --> B4
+    B3 --> B4
+
+    %% Preprocessing to BDH
+    B4 --> C1
+    
+    %% Within BDH Architecture
+    C1 --> C2A
+    C1 --> C2B
+    C2A --> C3
+    C2B --> C3
+    C3 --> C4
+    C4 --> C5
+    C4 -.->|Update weights| C2B
+    C2A -.->|Reference standard| C4
+
+    %% BDH to Analysis
+    C5 --> D1
+    C5 --> D2
+    C5 --> D3
+    D1 --> D4
+    D2 --> D4
+    D3 --> D4
+
+    %% Memory interactions
+    C5 -.->|Store synaptic state| E1
+    C4 -.->|Write| E1
+    D4 -.->|Read baseline| E2
+    E1 -.->|Retrieve context| D4
+    E2 -.->|Historical data| D4
+
+    %% Analysis to Clinical Output
+    D4 --> F1
+    C5 -.->|Active patterns| F1
+    F1 --> F2
+    F1 --> F3
+    F2 --> F4
+    F3 --> F4
+
+    %% Edge Deployment
+    F4 --> G1
+    G1 -.->|Continuous monitoring| A1
+    G1 -.->|Continuous monitoring| A2
+
+    %% Styling
+    classDef inputStyle fill:#e1f5ff,stroke:#0288d1,stroke-width:2px
+    classDef processStyle fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    classDef bdhStyle fill:#f3e5f5,stroke:#7b1fa2,stroke-width:3px
+    classDef memoryStyle fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
+    classDef clinicalStyle fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+    classDef edgeStyle fill:#e0e0e0,stroke:#424242,stroke-width:2px
+
+    class A1,A2,A3 inputStyle
+    class B1,B2,B3,B4 processStyle
+    class C1,C2A,C2B,C3,C4,C5 bdhStyle
+    class E1,E2 memoryStyle
+    class D1,D2,D3,D4,F1,F2,F3,F4 clinicalStyle
+    class G1 edgeStyle
+```

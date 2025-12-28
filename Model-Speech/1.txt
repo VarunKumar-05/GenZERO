@@ -1,0 +1,48 @@
+DAIC Analysis Report
+====================
+
+Global State-Determining Indicators:
+
+State: Speech Disfluency Detected
+  Top Determining Words: just(2748), so(2443), it's(2095), like(1873), they(1594), don't(1560), think(1545), um(1068), when(979), know(968), about(843), they're(839), things(711), more(667), yeah(655)
+  Sample Determining Sentences (248 total):
+    - "i got a job and i can i can take care of myself is already almost like a memorable experience maybe for the average person it it sounds stupid but you know i think just the fact that i'm able"
+    - "i've gotten somewhere"
+    - "to be a teacher for special education"
+    - "yeah i plan to go to the bahamas next year"
+    - "i would have been probably out in the field"
+
+State: Tremor Detected
+  Top Determining Words: just(2717), so(2443), it's(2068), like(1777), they(1575), think(1545), don't(1507), know(954), when(950), um(844), they're(820), about(819), things(711), more(657), yeah(602)
+  Sample Determining Sentences (175 total):
+    - "i got a job and i can i can take care of myself is already almost like a memorable experience maybe for the average person it it sounds stupid but you know i think just the fact that i'm able"
+    - "i've gotten somewhere"
+    - "to be a teacher for special education"
+    - "yeah i plan to go to the bahamas next year"
+    - "you're welcome"
+
+====================
+Session Reports:
+
+- Session 300_P
+  Frames: 3243
+  Hidden Norm Mean: 336.1854
+  Anomalies Detected: {'Speech Disfluency Detected': 3243}
+  State Indicators (most frequent words during state):
+    Speech Disfluency Detected: um(224), uh(172), like(96), going(93), school(78), right(62), enjoy(61), would(57), high(54), yeah(53)
+
+- Session 301_P
+  Frames: 4120
+  Hidden Norm Mean: 633.6974
+  Anomalies Detected: {'Tremor Detected': 4120, 'Speech Disfluency Detected': 4120}
+  State Indicators (most frequent words during state):
+    Tremor Detected: just(2239), it's(1744), think(1520), like(1323), so(1270), don't(902), know(853), they(671), well(574), work(436)
+    Speech Disfluency Detected: just(2239), it's(1744), think(1520), like(1323), so(1270), don't(902), know(853), they(671), well(574), work(436)
+
+- Session 304_P
+  Frames: 3963
+  Hidden Norm Mean: 519.8902
+  Anomalies Detected: {'Tremor Detected': 3963, 'Speech Disfluency Detected': 3963}
+  State Indicators (most frequent words during state):
+    Tremor Detected: so(1173), they(904), they're(686), when(680), um(625), don't(605), yeah(594), about(540), comes(488), more(483)
+    Speech Disfluency Detected: so(1173), they(904), they're(686), when(680), um(625), don't(605), yeah(594), about(540), comes(488), more(483)
