@@ -13,6 +13,11 @@ from catboost import CatBoostRegressor
 from sklearn.metrics import mean_squared_error
 from sklearn.preprocessing import StandardScaler
 from sklearn.impute import SimpleImputer
+from sklearn.model_selection import train_test_split
+import joblib  # Added for saving boosters
+
+import random
+import os
 
 # Config
 BATCH_SIZE = 16
@@ -20,6 +25,16 @@ DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 EPOCHS_BDH = 2 # Reduced for speed
 EPOCHS_SAE = 5 # Reduced for speed
 SEQ_LEN = 230
+SEED = 42
+
+def seed_everything(seed=42):
+    random.seed(seed)
+    os.environ['PYTHONHASHSEED'] = str(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed(seed)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
 
 def train_bdh_extractor(dataset, feature_extractor, device):
     dataloader = DataLoader(dataset, batch_size=BATCH_SIZE, shuffle=True, drop_last=True)
@@ -89,21 +104,28 @@ def extract_features(dataset, feature_extractor, device):
 def train_boosters(X, y):
     print("Training Boosters on Hybrid Features...")
     
-    lgb_model = lgb.LGBMRegressor(n_estimators=100, learning_rate=0.05, verbose=-1)
+    lgb_model = lgb.LGBMRegressor(n_estimators=100, learning_rate=0.05, verbose=-1, random_state=SEED)
     lgb_model.fit(X, y)
     print("LGBM Trained.")
     
-    xgb_model = xgb.XGBRegressor(n_estimators=100, learning_rate=0.05)
+    xgb_model = xgb.XGBRegressor(n_estimators=100, learning_rate=0.05, random_state=SEED)
     xgb_model.fit(X, y)
     print("XGB Trained.")
     
-    cat_model = CatBoostRegressor(iterations=100, learning_rate=0.05, verbose=0)
+    cat_model = CatBoostRegressor(iterations=100, learning_rate=0.05, verbose=0, random_seed=SEED)
     cat_model.fit(X, y)
     print("CatBoost Trained.")
+    
+    # Save booster models (Added for frontend integration)
+    joblib.dump(lgb_model, 'lgbm_pciat.pkl')
+    joblib.dump(xgb_model, 'xgb_pciat.pkl')
+    joblib.dump(cat_model, 'catboost_pciat.pkl')
+    print("Saved booster models: lgbm_pciat.pkl, xgb_pciat.pkl, catboost_pciat.pkl")
     
     return [lgb_model, xgb_model, cat_model]
 
 def main():
+    seed_everything(SEED)
     dataset = ChildMindDataset(split='train', sequence_length=SEQ_LEN)
     
     # 1. BDH Feature Extractor
@@ -146,16 +168,20 @@ def main():
     X = np.concatenate([tab_imputed, bdh_reduced], axis=1)
     y = targets
     
+    # Split Train/Test
+    print("Splitting Data...")
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=SEED)
+    
     # 5. Train Boosters
-    models = train_boosters(X, y)
+    models = train_boosters(X_train, y_train)
     
     # 6. Evaluate
     preds = []
     for model in models:
-        preds.append(model.predict(X))
+        preds.append(model.predict(X_test))
         
     avg_pred = np.mean(preds, axis=0)
-    mse = mean_squared_error(y, avg_pred)
+    mse = mean_squared_error(y_test, avg_pred)
     # QWK approximation
     from sklearn.metrics import cohen_kappa_score
     # simple thresholding for QWK (assuming 0-4 range based on sii)
@@ -164,7 +190,7 @@ def main():
     # Convert PCIAT to sii buckets roughly: <30:0, 30-50:1, 50-80:2, >80:3
     # This is rough validation only.
     
-    print(f"Ensemble MSE: {mse:.4f}")
+    print(f"Ensemble MSE (Test): {mse:.4f}")
     
     # QWK Evaluation
     def to_sii(score):
@@ -173,15 +199,16 @@ def main():
         if score < 80: return 2
         return 3
         
-    y_true_sii = [to_sii(s) for s in y]
+    y_true_sii = [to_sii(s) for s in y_test]
     y_pred_sii = [to_sii(s) for s in avg_pred]
     
     qwk = cohen_kappa_score(y_true_sii, y_pred_sii, weights='quadratic')
-    print(f"Ensemble QWK: {qwk:.4f}")
+    print(f"Ensemble QWK (Test): {qwk:.4f}")
     
     # Save Feature Extractor & SAE
     torch.save(feature_extractor.state_dict(), "bdh_child_mind.pth")
     torch.save(sae_model.state_dict(), "sae_child_mind.pth")
+    print("Saved: bdh_child_mind.pth, sae_child_mind.pth")
 
 if __name__ == "__main__":
     main()
