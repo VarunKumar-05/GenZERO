@@ -78,16 +78,28 @@ class RsFmriDataset(Dataset):
         # Convert to spikes
         spikes = self.spike_encoder(icn_tc) # (Time, 105)
         
-        # 3. Create Target for Trajectory Prediction (Next Step)
-        # Input: t, Target: t+1
-        # For simplicity, we just return the raw spikes as input and shifted spikes as target
-        # But usually we predict the continuous value or spike prob? 
-        # Let's predict the continuous value for the aux loss.
-        
+        # 3. Pad or Truncate
+        T = icn_tc.shape[0]
+        if T < self.sequence_length:
+            # Pad
+            padding_len = self.sequence_length - T
+            # Pad spikes with 0 (False)
+            spikes_padded = torch.cat([spikes, torch.zeros((padding_len, 105), dtype=torch.float32)], dim=0)
+            # Pad icn_tc with 0
+            icn_padded = torch.cat([torch.tensor(icn_tc, dtype=torch.float32), torch.zeros((padding_len, 105), dtype=torch.float32)], dim=0)
+            # Mask: 1 for real, 0 for padded
+            mask = torch.cat([torch.ones(T, dtype=torch.bool), torch.zeros(padding_len, dtype=torch.bool)], dim=0)
+        else:
+            # Truncate
+            spikes_padded = spikes[:self.sequence_length]
+            icn_padded = torch.tensor(icn_tc[:self.sequence_length], dtype=torch.float32)
+            mask = torch.ones(self.sequence_length, dtype=torch.bool)
+            
         return {
             'adj': torch.tensor(adj, dtype=torch.float32),
-            'spikes': spikes,
-            'icn_raw': torch.tensor(icn_tc, dtype=torch.float32),
+            'spikes': spikes_padded,
+            'icn_raw': icn_padded,
+            'mask': mask,
             'label': torch.tensor(label, dtype=torch.long)
         }
 
