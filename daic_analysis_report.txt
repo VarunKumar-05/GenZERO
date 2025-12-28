@@ -1,0 +1,13 @@
+Global State-Determining Indicators:
+Tremor: 50 words (um, uh)
+Disfluency: 50 words (um, uh)
+
+Session 300_P:
+Hidden Norm Mean: 346.8597
+Frames: 1000
+Words: um, uh, going, school
+
+Session 301_P:
+Hidden Norm Mean: 714.1008
+Frames: 1200
+Words: think, know, don't, feel
