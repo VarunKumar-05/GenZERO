@@ -1,3 +1,5 @@
 # GenZERO
 
-<img width="1919" height="1017" alt="image" src="https://github.com/user-attachments/assets/8742f6c8-4071-46b0-b8a3-867ed867404e" />
+
+<img width="1916" height="741" alt="image" src="https://github.com/user-attachments/assets/9d911b56-ea75-4bbe-9b23-7f85165c5d6d" />
+
