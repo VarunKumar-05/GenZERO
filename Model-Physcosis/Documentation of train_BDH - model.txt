@@ -1,0 +1,8 @@
+Purpose: It trains the model to distinguish between Schizophrenia (SZ) and Bipolar Disorder (BP) using brain imaging data.
+Input:
+FNC Matrices: 5,460 correlations used as initial synaptic weights.
+ICN Timecourses: 105 channels converted into Spike Trains.
+Mechanism: It implements the "BDH" concept from scratch (
+src/model/bdh.py
+) as a Spiking Graph Transformer, specifically designed to handle the graph structure of the brain ($105 \times 105$ nodes).
+Features: Includes your specific requirements like SMOTE (for class balancing), Sparsity Regularization ($L_1$ loss), and Trajectory Prediction (predicting the next time-step of brain activity).

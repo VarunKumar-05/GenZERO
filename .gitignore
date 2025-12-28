@@ -7,7 +7,7 @@ __pycache__/
 .ipynb_checkpoints/
 
 # Distribution / packaging
-.Python
+# .Python
 build/
 dist/
 .eggs/
@@ -42,8 +42,21 @@ Thumbs.db
 # Project-specific large assets
 data/
 external/**/__pycache__/
+external/bdh
+external/bdh/
 Model-Physcosis/psychosis-classification-with-rsfmri/data/
 src/Crema-D/AudioWAV/
 src/Dataser/DAIC_WOZ_Data/
 Model-Speech/*.pt
 Model-Speech/*.pth
+
+# User Requested Exclusions
+Model-Physcosis/Copy.ipynb
+
+# Model artifacts and training outputs
+*.pth
+*.pt
+*.tfevents
+**/catboost_info/
+**/data/**/raw/
+**/data/**/processed/
