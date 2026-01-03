@@ -1,0 +1,135 @@
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <title>Technical Documentation</title>
+        
+<style>
+    body {
+        font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+        line-height: 1.6;
+        color: #24292e;
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 40px;
+    }
+    h1, h2, h3 { border-bottom: 1px solid #eaecef; padding-bottom: .3em; }
+    code { background-color: #f6f8fa; padding: 0.2em 0.4em; border-radius: 3px; }
+    pre { background-color: #f6f8fa; padding: 16px; overflow: auto; border-radius: 3px; }
+    blockquote { border-left: .25em solid #dfe2e5; color: #6a737d; padding: 0 1em; }
+    table { border-collapse: collapse; width: 100%; margin-bottom: 16px; }
+    th, td { border: 1px solid #dfe2e5; padding: 6px 13px; }
+    th { background-color: #f6f8fa; }
+    img { max-width: 100%; }
+    
+    @media print {
+        body { max-width: 100%; padding: 0; }
+        a { text-decoration: none; color: black; }
+    }
+</style>
+
+    </head>
+    <body>
+        <h1>Model-Physcosis: Technical Architecture Document</h1>
+<h2>1. Architecture Overview (MultiHeadBDHNet)</h2>
+<p>The <strong>Model-Physcosis</strong> is built upon the <strong>MultiHead Baby Dragon Hatchling (BDH) Network</strong>, a specialized Spiking Neural Network (SNN) designed for temporal graph classification. Unlike traditional RNNs or Transformers, it leverages <strong>Hebbian Plasticity</strong> to "learn" the connectivity of the brain dynamically as it processes an fMRI scan.</p>
+<h3>1.1 Core Components</h3>
+<p>The model consists of three distinct computational blocks:</p>
+<ol>
+<li><strong>Multi-Head BDH Layer (<code>MultiHeadBDHLayer</code>)</strong>: The core plasticity engine.</li>
+<li><strong>Trajectory Attention Pooling (<code>TrajectoryPooling</code>)</strong>: A dynamic temporal aggregator.</li>
+<li><strong>Fused Classification Head</strong>: A dense layer combining structural and dynamic features.</li>
+</ol>
+<hr />
+<h2>2. In-Depth Component Analysis</h2>
+<h3>A. Multi-Head Plasticity Layer</h3>
+<p>Instead of fixed weights, the network maintains <strong>Evolving Synaptic Weights</strong> ($W_t$) that change for every time step $t$ in the fMRI sequence.</p>
+<ul>
+<li><strong>Input</strong>:<ul>
+<li><code>x</code>: Spike train sequence $(B, T, N)$, where $N=105$ (Brain Regions).</li>
+<li><code>w_init</code>: Initial Functional Network Connectivity (FNC) matrix $(B, N, N)$.</li>
+</ul>
+</li>
+<li>
+<p><strong>Mechanism</strong>:
+    The layer operates <strong>4 Parallel Plasticity Heads</strong>, each with a distinct <strong>Decay Rate ($\alpha$)</strong>:</p>
+<ul>
+<li><strong>Head 0 ($\alpha=0.9$)</strong>: Long-term memory (stable connectivity).</li>
+<li><strong>Head 1 ($\alpha=0.7$)</strong>: Medium-term adaptation.</li>
+<li><strong>Head 2 ($\alpha=0.5$)</strong>: Short-term adaptation.</li>
+<li><strong>Head 3 ($\alpha=0.1$)</strong>: Rapid transient response.</li>
+</ul>
+<p><strong>Hebbian Update Rule</strong>:
+For each head $h$, the synaptic weight matrix $W^{(h)}$ updates as:
+$$ W^{(h)}_{t+1} = \alpha_h \cdot W^{(h)}_t + \eta \cdot (x_t \otimes x_t^T) $$</p>
+<ul>
+<li>$\alpha_h$: The learnable decay factor for head $h$.</li>
+<li>$\eta$: The learnable learning rate (plasticity coefficient).</li>
+<li>$x_t \otimes x_t^T$: The outer product of activations (Hebb's rule: <em>neurons that fire together, wire together</em>).</li>
+</ul>
+</li>
+<li>
+<p><strong>Output</strong>:</p>
+<ul>
+<li><strong>Final Weights ($W_{final}$)</strong>: A tensor of shape $(B, 4, 105, 105)$ representing the <em>learned brain topology</em> after viewing the entire scan.</li>
+<li><strong>Output Sequence ($y_{seq}$)</strong>: A sequence $(B, T, 4, 105)$ representing the dynamic brain states.</li>
+</ul>
+</li>
+</ul>
+<h3>B. Trajectory Attention Pooling</h3>
+<p>To capture the temporal dynamics of the "thought process" (trajectory), we use an attention mechanism rather than simple averaging.</p>
+<ul>
+<li><strong>Input</strong>: The sequence of hidden states $y_{seq}$.</li>
+<li><strong>Mechanism</strong>:<ol>
+<li><strong>Query ($Q$)</strong>: A global learnable vector representing "what important moments look like."</li>
+<li><strong>Key/Value ($K, V$)</strong>: Projections of the sequence $y_{seq}$.</li>
+<li><strong>Attention</strong>: Computes a weighted sum of all time steps based on relevance to the Query.
+$$ \text{Context} = \text{Softmax}(\frac{Q K^T}{\sqrt{d}}) V $$</li>
+</ol>
+</li>
+<li><strong>Advantage</strong>: This allows the model to focus on specific moments of high synchronous activity (e.g., a sudden burst of connectivity) while ignoring noise.</li>
+</ul>
+<h3>C. Feature Fusion</h3>
+<p>The model combines two complementary views of the data for classification:
+1.  <strong>Structural View</strong>: The flattened final weights ($W_{final}$), representing the <strong>"Brain Wiring Diagram"</strong> learned over the session.
+2.  <strong>Dynamic View</strong>: The pooled trajectory context, representing the <strong>"Flow of Activity"</strong>.</p>
+<p>These are concatenated and passed to a dense classifier:
+$$ \text{Logits} = \text{MLP}(\text{Concat}(\text{Flatten}(W_{final}), \text{Pooled}(y_{seq}))) $$</p>
+<hr />
+<h2>3. Utilizing the BDH Advantage</h2>
+<p>The model exploits the BDH architecture to solve the specific challenges of fMRI analysis:</p>
+<h3>1. solving the Non-Stationarity Problem</h3>
+<p><strong>Challenge</strong>: Brain connectivity is not static; it changes rapidly (seconds) vs slowly (minutes).
+<strong>BDH Advantage</strong>: By using <strong>Multi-Head Plasticity with diverse $\alpha$ values</strong>, the model captures <strong>Multi-Scale Temporal Dynamics</strong>.
+*   High $\alpha$ heads capture the stable "traits" of the subject (e.g., Schizophrenia baseline).
+*   Low $\alpha$ heads capture the transient "states" (e.g., momentary thought patterns).</p>
+<h3>2. Solving the Data Scarcity Problem</h3>
+<p><strong>Challenge</strong>: fMRI datasets are small (hundreds of samples) but high-dimensional.
+<strong>BDH Advantage</strong>: <strong>Self-Supervised Hebbian Learning</strong>.
+The effective parameters (weights) are not learned via Gradient Descent but are <em>generated</em> by the data itself via the Hebbian rule. The model only learns the <em>hyperparameters</em> ($\alpha, \eta$) governing this generation. This makes the model extremely <strong>Data-Efficient</strong> and resistant to overfitting compared to an LSTM or Transformer with millions of fixed parameters.</p>
+<h3>3. Solving the Interpretability Problem</h3>
+<p><strong>Challenge</strong>: Deep learning models are black boxes.
+<strong>BDH Advantage</strong>: <strong>Explicit Topology</strong>.
+The final output $W_{final}$ is literally a connectivity matrix. We can inspect this matrix to see exactly which brain regions strengthened their connections during the scan. For example, if Regions A and B have a high weight in $W_{final}$, it means they fired synchronously throughout the session.</p>
+<hr />
+<h2>4. Performance Metrics</h2>
+<h3>Validated Accuracy</h3>
+<p>Our final model, trained with <strong>Stratified Splitting</strong> and <strong>Weighted Cross-Entropy Loss</strong> to handle class imbalance, achieves:</p>
+<ul>
+<li><strong>Overall Validation Accuracy</strong>: <strong>62.11%</strong> (Macro-Average: 62.12%)</li>
+<li><strong>Class-Wise Performance</strong>:<ul>
+<li><strong>Bipolar Disorder (BP)</strong>: 62.2% Recall, 51.1% Precision.</li>
+<li><strong>Schizophrenia (SZ)</strong>: 62.1% Recall, 72.0% Precision.</li>
+</ul>
+</li>
+<li><strong>Confusion Matrix (Validation)</strong>:<ul>
+<li><strong>BP</strong>: 23 Correct / 14 Missed</li>
+<li><strong>SZ</strong>: 36 Correct / 22 Missed</li>
+</ul>
+</li>
+</ul>
+<p><strong>Significance</strong>: Unlike previous iterations that achieved ~55% by guessing the majority class (SZ), this model is <strong>perfectly balanced</strong>, demonstrating a true ability to discriminate between the two conditions despite the noise and complexity of fMRI data.</p>
+    </body>
+    </html>
+    

@@ -4,46 +4,164 @@ DAIC Analysis Report
 Global State-Determining Indicators:
 
 State: Tremor Detected
-  Top Determining Words: just(2748), so(2443), it's(2095), like(1873), they(1594), don't(1560), think(1545), um(1068), when(979), know(968), about(843), they're(839), things(711), more(667), yeah(655)
-  Sample Determining Sentences (248 total):
-    - "mmm kind of answered itself so"
-    - "i would say going to college right after high school"
-    - "what do you mean"
-    - "to not "
-    - "um probably about"
-
-State: Speech Disfluency Detected
-  Top Determining Words: just(2748), so(2443), it's(2095), like(1873), they(1594), don't(1560), think(1545), um(1068), when(979), know(968), about(843), they're(839), things(711), more(667), yeah(655)
-  Sample Determining Sentences (248 total):
-    - "mmm kind of answered itself so"
-    - "i would say going to college right after high school"
-    - "what do you mean"
-    - "to not "
-    - "um probably about"
+  Top Determining Words: uh(15611), um(15446), just(14027), know(12713), like(12382), so(11913), it's(8747), don't(7921), really(6025), think(5590), people(4932), about(4734), things(4323), they(4023), when(3174)
+  Sample Determining Sentences (2575 total):
+    - "i'm an actor i uh right now i'm doing a a theater show and auditioning and taking some classes and "
+    - "my memory"
+    - "but it's good to have"
+    - "pretty dysfunctional family"
+    - "i'm trying i'm trying i'm trying i'm trying i'm trying i'm trying i'm trying"
 
 ====================
 Session Reports:
 
 - Session 300_P
   Frames: 3243
-  Hidden Norm Mean: 346.8597
-  Anomalies Detected: {'Tremor Detected': 3243, 'Speech Disfluency Detected': 3243}
-  State Indicators (most frequent words during state):
-    Tremor Detected: um(224), uh(172), like(96), going(93), school(78), right(62), enjoy(61), would(57), high(54), yeah(53)
-    Speech Disfluency Detected: um(224), uh(172), like(96), going(93), school(78), right(62), enjoy(61), would(57), high(54), yeah(53)
+  Hidden Norm Mean: 75.2483
 
 - Session 301_P
   Frames: 4120
-  Hidden Norm Mean: 714.1008
-  Anomalies Detected: {'Tremor Detected': 4120, 'Speech Disfluency Detected': 4120}
+  Hidden Norm Mean: 79.8617
+  Anomalies Detected: {'Tremor Detected': 4120}
   State Indicators (most frequent words during state):
     Tremor Detected: just(2239), it's(1744), think(1520), like(1323), so(1270), don't(902), know(853), they(671), well(574), work(436)
-    Speech Disfluency Detected: just(2239), it's(1744), think(1520), like(1323), so(1270), don't(902), know(853), they(671), well(574), work(436)
 
 - Session 304_P
   Frames: 3963
-  Hidden Norm Mean: 571.7727
-  Anomalies Detected: {'Tremor Detected': 3963, 'Speech Disfluency Detected': 3963}
+  Hidden Norm Mean: 74.7864
+  Anomalies Detected: {'Tremor Detected': 3963}
   State Indicators (most frequent words during state):
     Tremor Detected: so(1173), they(904), they're(686), when(680), um(625), don't(605), yeah(594), about(540), comes(488), more(483)
-    Speech Disfluency Detected: so(1173), they(904), they're(686), when(680), um(625), don't(605), yeah(594), about(540), comes(488), more(483)
+
+- Session 305_P
+  Frames: 8520
+  Hidden Norm Mean: 109.7299
+  Anomalies Detected: {'Tremor Detected': 8520}
+  State Indicators (most frequent words during state):
+    Tremor Detected: uh(5020), know(4742), just(2139), don't(1700), so(1684), like(1487), um(1481), it's(1240), about(948), people(738)
+
+- Session 306_P
+  Frames: 4291
+  Hidden Norm Mean: 94.4754
+  Anomalies Detected: {'Tremor Detected': 4291}
+  State Indicators (most frequent words during state):
+    Tremor Detected: uh(2475), just(1486), know(1347), um(1205), so(595), about(577), work(538), it's(525), think(473), something(383)
+
+- Session 307_P
+  Frames: 6194
+  Hidden Norm Mean: 107.6804
+  Anomalies Detected: {'Tremor Detected': 6194}
+  State Indicators (most frequent words during state):
+    Tremor Detected: like(2933), so(2151), just(2148), it's(1462), know(958), 'cause(832), um(728), don't(644), really(628), guess(567)
+
+- Session 308_P
+  Frames: 4338
+  Hidden Norm Mean: 76.3083
+  Anomalies Detected: {'Tremor Detected': 4338}
+  State Indicators (most frequent words during state):
+    Tremor Detected: just(484), um(379), don't(274), skate(216), uh(208), it's(200), know(180), trying(171), like(168), so(167)
+
+- Session 309_P
+  Frames: 3530
+  Hidden Norm Mean: 76.3460
+  Anomalies Detected: {'Tremor Detected': 10}
+
+- Session 316_P
+  Frames: 4346
+  Hidden Norm Mean: 81.9714
+
+- Session 318_P
+  Frames: 2942
+  Hidden Norm Mean: 77.4689
+
+- Session 320_P
+  Frames: 4204
+  Hidden Norm Mean: 73.6541
+
+- Session 321_P
+  Frames: 4110
+  Hidden Norm Mean: 73.6501
+
+- Session 322_P
+  Frames: 5236
+  Hidden Norm Mean: 83.3450
+  Anomalies Detected: {'Tremor Detected': 5236}
+  State Indicators (most frequent words during state):
+    Tremor Detected: uh(2522), know(1200), um(639), things(289), very(258), able(258), some(234), then(208), there(204), when(203)
+
+- Session 323_P
+  Frames: 4185
+  Hidden Norm Mean: 76.6250
+  Anomalies Detected: {'Tremor Detected': 4185}
+  State Indicators (most frequent words during state):
+    Tremor Detected: uh(806), don't(646), things(459), so(440), love(383), very(373), just(267), like(239), make(236), people(231)
+
+- Session 324_P
+  Frames: 3607
+  Hidden Norm Mean: 73.3342
+  Anomalies Detected: {'Tremor Detected': 18}
+
+- Session 325_P
+  Frames: 4376
+  Hidden Norm Mean: 88.0580
+  Anomalies Detected: {'Tremor Detected': 4376}
+  State Indicators (most frequent words during state):
+    Tremor Detected: um(2319), really(1190), so(1057), think(749), it's(633), just(597), uh(562), about(507), like(492), know(459)
+
+- Session 335_P
+  Frames: 4151
+  Hidden Norm Mean: 77.5322
+  Anomalies Detected: {'Tremor Detected': 4151}
+  State Indicators (most frequent words during state):
+    Tremor Detected: like(1309), uh(673), um(528), things(505), people(427), just(400), don't(335), <laughter>(303), so(299), well(265)
+
+- Session 346_P
+  Frames: 6110
+  Hidden Norm Mean: 86.7325
+  Anomalies Detected: {'Tremor Detected': 6110}
+  State Indicators (most frequent words during state):
+    Tremor Detected: um(2539), just(1041), uh(672), so(668), people(654), really(481), know(462), don't(429), it's(369), about(331)
+
+- Session 377_P
+  Frames: 6642
+  Hidden Norm Mean: 91.1986
+  Anomalies Detected: {'Tremor Detected': 6642}
+  State Indicators (most frequent words during state):
+    Tremor Detected: um(1677), so(1146), just(807), like(693), know(512), yeah(461), then(435), don't(433), <sigh>(405), people(365)
+
+- Session 381_P
+  Frames: 5447
+  Hidden Norm Mean: 75.3966
+  Anomalies Detected: {'Tremor Detected': 5447}
+  State Indicators (most frequent words during state):
+    Tremor Detected: think(684), don't(499), uh(465), well(399), really(388), know(371), it's(347), um(311), more(301), just(300)
+
+- Session 388_P
+  Frames: 4157
+  Hidden Norm Mean: 83.9378
+  Anomalies Detected: {'Tremor Detected': 12}
+
+- Session 389_P
+  Frames: 4766
+  Hidden Norm Mean: 82.5348
+
+- Session 422_P
+  Frames: 6674
+  Hidden Norm Mean: 91.5886
+  Anomalies Detected: {'Tremor Detected': 6674}
+  State Indicators (most frequent words during state):
+    Tremor Detected: um(1019), like(864), really(745), they(617), know(539), so(531), just(483), uh(461), it's(458), <laughter>(437)
+
+- Session 440_P
+  Frames: 7071
+  Hidden Norm Mean: 85.3685
+  Anomalies Detected: {'Tremor Detected': 7071}
+  State Indicators (most frequent words during state):
+    Tremor Detected: um(989), about(307), know(298), just(285), so(264), uh(253), think(172), because(171), been(154), <clears(153)
+
+- Session 483_P
+  Frames: 7886
+  Hidden Norm Mean: 90.3443
+  Anomalies Detected: {'Tremor Detected': 7886}
+  State Indicators (most frequent words during state):
+    Tremor Detected: like(1274), just(809), um(634), don't(549), know(546), it's(536), uh(489), <laughter>(367), think(329), really(298)

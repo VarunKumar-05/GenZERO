@@ -1,7 +1,7 @@
 # Child Mind Institute: Advanced Hybrid BDH-Booster Model
 
 ## Overview
-**[Technical Reference: Code Documentation](CODE_DOCUMENTATION.md)** | **[Deep Dive: Model Details](MODEL_DETAILS.md)**
+**[Technical Reference: Code Documentation](CODE_DOCUMENTATION.md)** | **[Deep Dive: Model Details](MODEL_DETAILS.md)** | **[Dataset Specs](DATASET_SPEC.md)** | **[Journey & Roadmap](WIKI_JOURNEY.md)**
 
 This solution implements a state-of-the-art hybrid architecture to predict Problematic Internet Use (PCIAT scores). It combines:
 1.  **Age-Gated Biological Dynamic Hebbian (BDH) Model**: A Spiking Graph Transformer that learns temporal activity patterns from Actigraphy, gated by age.

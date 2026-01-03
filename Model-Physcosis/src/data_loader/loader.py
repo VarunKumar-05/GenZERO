@@ -76,7 +76,9 @@ class RsFmriDataset(Dataset):
         icn_tc = (icn_tc - np.mean(icn_tc)) / (np.std(icn_tc) + 1e-6)
         
         # Convert to spikes
-        spikes = self.spike_encoder(icn_tc) # (Time, 105)
+        # Use subject ID hash as seed for deterministic encoding
+        seed = int(hash(sample_info['subject_id']) % 10**8)
+        spikes = self.spike_encoder(icn_tc, seed=seed) # (Time, 105)
         
         # 3. Pad or Truncate
         T = icn_tc.shape[0]

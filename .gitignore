@@ -60,3 +60,14 @@ Model-Physcosis/Copy.ipynb
 **/catboost_info/
 **/data/**/raw/
 **/data/**/processed/
+
+# Video recordings
+*.mkv
+*.mp4
+
+# Model-Child-Mind
+Model-Child-Mind/catboost_info/
+Model-Child-Mind/debug_child_mind.py
+Model-Child-Mind/test_model_logic.py
+Model-Child-Mind/test_imports.py
+Model-Child-Mind/*.png

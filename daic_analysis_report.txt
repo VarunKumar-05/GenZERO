@@ -1,0 +1,23 @@
+DAIC Analysis Report
+====================
+
+Global State-Determining Indicators:
+
+State: Tremor Detected
+  Top Determining Words: um(989), about(307), know(298), just(285), so(264), uh(253), think(172), because(171), been(154), <clears(153), throat>(153), like(150), children(146), time(143), when(138)
+  Sample Determining Sentences (262 total):
+    - "he knows that i've been resentful of him"
+    - "because the program that i was in"
+    - "to go to college right after high school"
+    - "um the freedom to explore outdoors"
+    - "are you the one that's cheating and so that's how that"
+
+====================
+Session Reports:
+
+- Session 440_P
+  Frames: 7071
+  Hidden Norm Mean: 782.8308
+  Anomalies Detected: {'Tremor Detected': 7071}
+  State Indicators (most frequent words during state):
+    Tremor Detected: um(989), about(307), know(298), just(285), so(264), uh(253), think(172), because(171), been(154), <clears(153)

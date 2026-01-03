@@ -1,5 +1,12 @@
-import os
 import sys
+import argparse
+import os
+
+# Add project root to path to allow importing src
+project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if project_root not in sys.path:
+    sys.path.append(project_root)
+
 from collections import Counter, defaultdict
 
 import torch
@@ -9,18 +16,28 @@ from src.analysis.detector import AnalysisLayer
 from src.memory.storage import PersistentMemory
 
 # Add forked BDH repo to path
-BDH_PATH = os.path.join(os.path.dirname(__file__), "external", "bdh")
+# external is in the project root
+BDH_PATH = os.path.join(project_root, "external", "bdh")
 if BDH_PATH not in sys.path:
     sys.path.append(BDH_PATH)
 import bdh  # type: ignore
 
 
-def train_daic(root_dir: str, max_sessions: int = None):
+def train_daic(root_dir: str, max_sessions: int = None, target_session_id: str = None):
     print(f"Loading DAIC-WOZ data from {root_dir}...")
     loader = DAICLoader(root_dir, target_dim=128, audio_enabled=True, audio_feature_dim=45)
     
+    # Filter for specific session if requested
+    if target_session_id:
+        # loader.sessions contains full paths
+        filtered = [s for s in loader.sessions if target_session_id in os.path.basename(s)]
+        if not filtered:
+            print(f"Session {target_session_id} not found in {root_dir}")
+            return
+        loader.sessions = filtered
+        print(f"Targeting specific session: {target_session_id}")
     # Optimization: slice sessions before loading to avoid processing everything
-    if max_sessions:
+    elif max_sessions:
         loader.sessions = loader.sessions[:max_sessions]
         
     sessions = loader.iter_sessions()
@@ -246,8 +263,19 @@ def train_daic(root_dir: str, max_sessions: int = None):
                     f.write(f"    {state}: {formatted}\n")
                     
     print("\nAnalysis report saved to 'daic_analysis_report.txt'")
+    
+    # Save the learned stable synapses
+    save_path = "learned_synapses.pt"
+    torch.save(model.synapses.weights.data, save_path)
+    print(f"Freshly learned synapses saved to '{save_path}'")
 
 
 if __name__ == "__main__":
-    data_root = os.path.join("src", "Dataser", "DAIC_WOZ_Data")
-    train_daic(data_root, max_sessions=3)
+    parser = argparse.ArgumentParser(description="Train/Run DAIC-WOZ Analysis")
+    parser.add_argument("--root", type=str, default=os.path.join("src", "Dataser", "DAIC_WOZ_Data"), help="Path to DAIC_WOZ_Data root")
+    parser.add_argument("--session", type=str, default=None, help="Specific session ID to run (e.g. 300_P)")
+    parser.add_argument("--max_sessions", type=int, default=None, help="Max number of sessions to process")
+    
+    args = parser.parse_args()
+    
+    train_daic(args.root, max_sessions=args.max_sessions, target_session_id=args.session)

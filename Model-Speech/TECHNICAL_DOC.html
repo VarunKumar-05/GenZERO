@@ -1,0 +1,86 @@
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <title>Technical Documentation</title>
+        
+<style>
+    body {
+        font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+        line-height: 1.6;
+        color: #24292e;
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 40px;
+    }
+    h1, h2, h3 { border-bottom: 1px solid #eaecef; padding-bottom: .3em; }
+    code { background-color: #f6f8fa; padding: 0.2em 0.4em; border-radius: 3px; }
+    pre { background-color: #f6f8fa; padding: 16px; overflow: auto; border-radius: 3px; }
+    blockquote { border-left: .25em solid #dfe2e5; color: #6a737d; padding: 0 1em; }
+    table { border-collapse: collapse; width: 100%; margin-bottom: 16px; }
+    th, td { border: 1px solid #dfe2e5; padding: 6px 13px; }
+    th { background-color: #f6f8fa; }
+    img { max-width: 100%; }
+    
+    @media print {
+        body { max-width: 100%; padding: 0; }
+        a { text-decoration: none; color: black; }
+    }
+</style>
+
+    </head>
+    <body>
+        <h1>Model-Speech (SynaptoRehab): Technical Architecture Document</h1>
+<h2>1. System Overview</h2>
+<p><strong>Model-Speech</strong> (codenamed <em>SynaptoRehab</em>) is an <strong>Unsupervised Spiking Neural Network (SNN)</strong> designed for <strong>Bio-Behavioral Anomaly Detection</strong>. Unlike standard classifiers that Map $X \to Y$, this system monitors the temporal evolution of brain-like states to detect neurological deviations (Tremors, Disfluency, Fatigue) in real-time.</p>
+<h3>1.1 Core Philosophy</h3>
+<p>The model operates on the principle of <strong>"Comparison to Self"</strong>. It does not have hardcoded thresholds for what constitutes a "tremor." Instead, it learns a baseline of the user's normal activity and flags statistically significant deviations.</p>
+<hr />
+<h2>2. Architecture Breakdown</h2>
+<h3>A. Input Processing Layer</h3>
+<p>The system processes multi-modal data frame-by-frame:
+1.  <strong>Acoustic Features</strong>: eGeMAPS (88 dimensions) - Pitch, Jitter, Shimmer, Loudness.
+2.  <strong>Semantic Features</strong>: Word Embeddings/Counts from transcripts.
+3.  <strong>Normalization</strong>: A <code>LayerNorm</code> (128-dim) standardizes these mixed signals to ensure stability before entering the SNN.</p>
+<h3>B. The BDH Spiking Core (<code>SpikingNeuralNetwork</code>)</h3>
+<p>The heart of the system is a recurrent SNN with <strong>Hebbian Plasticity</strong>.</p>
+<ul>
+<li><strong>Structure</strong>: 128 Input Neurons $\to$ 256 Hidden Neurons (Recurrent).</li>
+<li><strong>Dynamics</strong>:
+    $$ h_t = \text{ReLU}(W_{in} x_t + 0.1 \cdot W_{syn} h_{t-1}) $$
+    The hidden state $h_t$ represents the current "neural activation pattern."</li>
+</ul>
+<h3>C. Stabilized Hebbian Learning</h3>
+<p>To prevent the "weight explosion" common in unsupervised learning, we implemented a <strong>Decay-Based Hebbian Rule</strong>:</p>
+<p>$$ W_{new} = \alpha \cdot W_{old} + \eta \cdot (h_t \otimes h_t^T) $$</p>
+<ul>
+<li><strong>Decay Factor ($\alpha = 0.99$)</strong>: This "forgetting factor" ensures that old, irrelevant correlations fade over time, keeping the weights bounded.</li>
+<li><strong>Soft Clamping</strong>: If any weight exceeds a magnitude of 5.0, it is scaled down. This ensures numerical stability over long sessions.</li>
+</ul>
+<h3>D. Calibrated Concept Probes (<code>CalibratedDetector</code>)</h3>
+<p>Instead of training a classifier, we use <strong>Z-Score Anomaly Detection</strong> on specific neuron clusters ("Concepts").</p>
+<ol>
+<li><strong>Calibration Phase</strong>: For the first 200 frames ($\sim$6 seconds), the system does <strong>not</strong> detect errors. Instead, it computes the Mean ($\mu$) and Standard Deviation ($\sigma$) of every neuron's firing rate.</li>
+<li><strong>Detection Phase</strong>: For all subsequent frames, we calculate the Z-Score:
+    $$ Z = \frac{h_t - \mu}{\sigma} $$</li>
+<li><strong>Trigger Logic</strong>:<ul>
+<li><strong>Tremor / Hyperactivity</strong>: If selected neurons exceed $Z &gt; 2.0$ (2 Sigma event).</li>
+<li><strong>Fatigue / Hypoactivity</strong>: If selected neurons fall below $Z &lt; -1.5$.</li>
+</ul>
+</li>
+</ol>
+<hr />
+<h2>3. Key Advantages</h2>
+<h3>1. Zero-Shot Adaptation</h3>
+<p>The model does not need to be pre-trained on a specific patient's data. Because of the <strong>Dynamic Calibration</strong>, it adapts to <em>any</em> user within 6 seconds. If a user naturally speaks loudly, the baseline $\mu$ shifts up, and the system correctly ignores it, only flagging <em>relative</em> spikes.</p>
+<h3>2. Clinical Interpretability</h3>
+<p>The Learned Synapses ($W_{syn}$) capture word-state correlations. By inspecting the weights, we found the model automatically learned that:
+*   <strong>"uh" / "um"</strong> $\to$ Strongly excitatory connections to the <strong>Disfluency Concept</strong>.
+*   <strong>"just" / "so"</strong> $\to$ Weak connections (fillers).</p>
+<p>This confirms the unsupervised learning successfully identified linguistic markers of hesitation without being explicitly told what "stuttering" looks like.</p>
+<h3>3. Lightweight &amp; Real-Time</h3>
+<p>The entire architecture uses simple matrix multiplications and requires no backpropagation during inference. It can run on edge devices (phones/tablets) with negligible latency.</p>
+    </body>
+    </html>
+    
