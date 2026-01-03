@@ -14,7 +14,6 @@ from sklearn.metrics import mean_squared_error
 from sklearn.preprocessing import StandardScaler
 from sklearn.impute import SimpleImputer
 from sklearn.model_selection import train_test_split
-import joblib  # Added for saving boosters
 
 import random
 import os
@@ -116,12 +115,6 @@ def train_boosters(X, y):
     cat_model.fit(X, y)
     print("CatBoost Trained.")
     
-    # Save booster models (Added for frontend integration)
-    joblib.dump(lgb_model, 'lgbm_pciat.pkl')
-    joblib.dump(xgb_model, 'xgb_pciat.pkl')
-    joblib.dump(cat_model, 'catboost_pciat.pkl')
-    print("Saved booster models: lgbm_pciat.pkl, xgb_pciat.pkl, catboost_pciat.pkl")
-    
     return [lgb_model, xgb_model, cat_model]
 
 def main():
@@ -208,7 +201,6 @@ def main():
     # Save Feature Extractor & SAE
     torch.save(feature_extractor.state_dict(), "bdh_child_mind.pth")
     torch.save(sae_model.state_dict(), "sae_child_mind.pth")
-    print("Saved: bdh_child_mind.pth, sae_child_mind.pth")
 
 if __name__ == "__main__":
     main()
